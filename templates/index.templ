@@ -1,0 +1,28 @@
+package templates
+
+
+import(
+    "github.com/eif-courses/go-web/components/button"
+)
+
+templ Layout(title string) {
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{title}</title>
+        <link rel="stylesheet" href="/assets/css/output.css"/>
+    </head>
+    <body>
+        { children... }
+    </body>
+    </html>
+}
+
+templ ButtonPage() {
+    @Layout("Button Demo") {
+        @button.Button() {
+            Button
+        }
+    }
+}
+

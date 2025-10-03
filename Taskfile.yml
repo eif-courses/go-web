@@ -1,0 +1,40 @@
+version: '3'
+
+vars:
+  PORT: 8080
+  TEMPL_PROXY_PORT: 7331
+
+tasks:
+  templ:
+    desc: Run templ in watch mode
+    cmds:
+      - templ generate --watch --proxy="http://localhost:{{.PORT}}" --open-browser=false
+
+  server:
+    desc: Run Go server with hot reload (Air)
+    cmds:
+      - air
+
+  tailwind:
+    desc: Watch Tailwind CSS changes
+    cmds:
+      - tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch
+
+  dev:
+    desc: Start full development environment
+    deps: [tailwind, templ, server]
+    cmds:
+      - "echo 🚀 Starting development servers..."
+      - "echo 👉 Go server (air): http://localhost:{{.PORT}}"
+      - "echo 👉 Templ proxy: http://localhost:{{.TEMPL_PROXY_PORT}}"
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf tmp || true
+      - rm -f assets/css/output.css || true
+  migrations:
+    cmds:
+      - echo "Migrations is updating..."
+      - goose -s -dir ./migrations create {{.CLI_ARGS}} sql
+    silent: false
