@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/eif-courses/go-web/templates"
@@ -15,8 +16,17 @@ func main() {
 
 	// Your route
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		templates.ButtonPage().Render(r.Context(), w)
+		err := templates.ButtonPage().Render(r.Context(), w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Printf("Error rendering template: %v", err)
+		}
 	})
 
-	http.ListenAndServe("localhost:8080", r)
+	log.Println("🚀 Server starting on http://localhost:8080")
+
+	// This is the key fix - check for errors!
+	if err := http.ListenAndServe("localhost:8080", r); err != nil {
+		log.Fatalf("❌ Server failed to start: %v", err)
+	}
 }
